@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include("../partial/head.ejs")%>
+    <body>
+
+        <div class="container mt-5 p-2 border border-secondary rounded">
+            <h1 class="display-4 text-center mb-0 pb-0">Short Your URLs Here</h1>
+            <hr class="below_heading my-0 py-0">
+
+            <form class="mt-4 px-auto col-10 offset-1">
+                <div class="form-row my-1 mb-3">
+                    <div class="col-10 offset-1 my-1">
+                      <input type="text" class="form-control" name="url" id="url" placeholder="Enter URl Here!" >
+                    </div>
+                    <div class="col-10 offset-1 my-1" id="urlNotification"></div>
+                </div>
+                <button class="btn btn-primary createItBtn col-6 offset-3 font-weight-bold">Create It</button>
+                
+            </form>
+            <div class="text-center col-8 offset-2 my-2 mt-5" id="showSortUrl">
+                <h2 class="col-12 display-4 font-weight-bold">Click on url to copy</h2>
+                <p class="text-primary col-12" id="responseData"></p>
+                <p id="copiedText"></p>
+            </div>
+        </div>
+
+        <script>
+            const createBtn = document.querySelector('.createItBtn');            
+            const url = document.getElementById('url');
+            const urlNotify = document.getElementById('urlNotification');
+            const responseData = document.getElementById('responseData');
+            const cpyNotify = document.getElementById('copiedText');
+            const dataDiv = document.getElementById('showSortUrl');
+
+            responseData.onclick = function() {
+            document.execCommand("copy");
+            }
+
+            responseData.addEventListener("copy", function(event) {
+                event.preventDefault();
+                if (event.clipboardData) {
+                    event.clipboardData.setData("text/plain", responseData.textContent);
+                    cpyNotify.className = 'text-success';
+                    cpyNotify.innerText = 'copied!';
+                    setTimeout( ()=>{
+                        cpyNotify.innerText = '';
+                    }, 3000)
+                } else {
+                    cpyNotify.className = 'text-danger'
+                    cpyNotify.innerText = 'unable to copy!'
+                    setTimeout( ()=>{
+                        cpyNotify.innerText = '';
+                    }, 3000)
+                }
+            });
+
+            createBtn.addEventListener('click', async (e)=>{
+                e.preventDefault();
+
+                if(url.value.trim() === ''){
+
+                    urlNotify.innerHTML = '<p class="text-danger font-weight-bold">Please enter url</p>';
+
+                    setTimeout( ()=>{
+                        urlNotify.innerHTML = ''
+                    },3000);
+                } else {
+                    const data = url.value;
+                    await fetch('/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ url: data })
+                    }).then( res=> res.json())
+                    .then(data => {
+                        if(data.shorted){
+                            dataDiv.style.display = 'block';
+                            responseData.innerText = `http://localhost:3000/${data.shorted}`;
+                        } else {
+                            urlNotify.innerHTML = '<p class="text-danger font-weight-bold">Unable to short</p>';
+
+                            setTimeout( ()=>{
+                                urlNotify.innerHTML = '';
+                            },3000)
+                        }
+                    })
+                    .catch(err=>{
+                        console.log(err)
+                    })
+                }
+            })
+        </script>
+    </body>
+</html>

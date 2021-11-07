@@ -1,0 +1,19 @@
+* {
+    font-family: 'Quicksand', sans-serif;
+}
+
+.below_heading {
+    width: 20%;
+    background-color: darkslategrey;
+    color: darkslategrey;
+    border: 4px solid darkslategrey;
+    border-radius: 30px;
+}
+
+#responseData {
+    cursor: pointer;
+}
+
+#showSortUrl {
+    display: none;
+}
