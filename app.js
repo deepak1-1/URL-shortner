@@ -3,19 +3,21 @@ const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const basicRoutes = require('./routes/basicRoutes');
+const port = 3000;
 
 
 // express app
 const app = express();
 
 // connect to database
-const dbURI = 'mongodb://localhost:27017/Url_shortner'
+// const dbURI = 'mongodb://localhost:27017/Url_shortner'
+const dbURI = 'mongodb+srv://deepak_121:deepak_121@cluster0.z7bhc.mongodb.net/Url-shortner?retryWrites=true&w=majority'
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then((result)=>{
 
         //listen over requests
-        app.listen(3000, ()=>{
-            console.log('Listening to port 3000');
+        app.listen(process.env.PORT  || port, ()=>{
+            console.log('Listening to port '+ port);
         });
     })
     .catch(err => {console.log(err)});
